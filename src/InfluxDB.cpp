@@ -68,8 +68,13 @@
      // send it
      request.path = String::format("/write?db=%s&precision=s&u=%s&p=%s",_databaseName.c_str(),_username,_password);
      request.body = requestString;
-     http.post(request, response);
-
+     response.status = -1;
+     for (int retry = 0; retry < 5 && response.status == -1; ++retry) {
+       http.post(request, response);
+       if (response.status == -1) {
+         delay(100);
+       }
+     }
    }
    _currentValue = 0;
    if (response.status == 204) {
@@ -87,6 +92,11 @@
 
  void InfluxDB::printDebug(http_request_t &request, http_response_t &response)
  {
+   if (!_debug)
+   {
+     return;
+   }
+
    Serial.println(request.path);
    Serial.println(request.body);
    Serial.print("HTTP Response: ");
