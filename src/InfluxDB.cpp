@@ -71,12 +71,12 @@
      http.post(request, response);
 
    }
-   _currentValue = 0;
    if (response.status == 204) {
+     _currentValue = 0;
      return true;
    } else {
      printDebug(request, response);
-     Particle.publish("ERROR", response.body, PRIVATE);
+     Particle.publish("ERROR", response.body);
      return false;
    }
  }
